@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fechamento Diário</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f5f3;
+      --surface: #ffffff;
+      --surface-alt: #f0efeb;
+      --border: #e0deda;
+      --border-strong: #c8c6c0;
+      --text: #1a1a18;
+      --text-secondary: #6b6a66;
+      --text-muted: #9e9d99;
+      --accent: #2563eb;
+      --success-bg: #eaf3de;
+      --success-border: #97c459;
+      --success-text: #3b6d11;
+      --warning-bg: #faeeda;
+      --warning-border: #ef9f27;
+      --warning-text: #854f0b;
+      --danger-bg: #fcebeb;
+      --danger-border: #f09595;
+      --danger-text: #a32d2d;
+      --radius: 8px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a18;
+        --surface: #2c2c2a;
+        --surface-alt: #242422;
+        --border: #3a3a38;
+        --border-strong: #4e4e4b;
+        --text: #f0efeb;
+        --text-secondary: #a0a09c;
+        --text-muted: #6b6a66;
+        --accent: #60a5fa;
+        --success-bg: #173404;
+        --success-border: #639922;
+        --success-text: #c0dd97;
+        --warning-bg: #412402;
+        --warning-border: #ba7517;
+        --warning-text: #fac775;
+        --danger-bg: #501313;
+        --danger-border: #a32d2d;
+        --danger-text: #f7c1c1;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Outfit', Roboto, sans-serif;
+      background-image: url("../fechamento/imagem/images.jpg");
+      background-repeat: no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .header {
+      margin-bottom: 1.75rem;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header h1 svg { flex-shrink: 0; }
+
+    .header p {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .config-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .config-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .config-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .meta-input {
+      width: 110px;
+      text-align: right;
+      font-size: 15px;
+      font-weight: 600;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      padding: 6px 10px;
+      background: var(--surface-alt);
+      color: var(--text);
+      outline: none;
+    }
+
+    .meta-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(251, 251, 252, 0.12);
+    }
+
+    .input-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      display: block;
+      font-weight: 500;
+    }
+
+    .realizado-wrap {
+      display: flex;
+      gap: 10px;
+    }
+
+    .realizado-input {
+      flex: 1;
+      font-size: 24px;
+      font-weight: 600;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+    }
+
+    .realizado-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(248, 246, 246, 0.12);
+    }
+
+    .realizado-input::placeholder {
+      color: var(--text-muted);
+      font-size: 18px;
+    }
+
+    .btn-calc {
+      padding: 10px 22px;
+      border-radius: var(--radius);
+      border: none;
+      background: var(--text);
+      color: var(--bg);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+
+    .btn-calc:hover { opacity: 0.82; }
+    .btn-calc:active { transform: scale(0.97); }
+
+    .results { display: none; }
+    .results.show { display: block; }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+    }
+
+    .metric-card .label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .metric-card .value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .metric-card.delta-pos {
+      border-color: var(--success-border);
+      background: var(--success-bg);
+    }
+    .metric-card.delta-pos .value { color: var(--success-text); }
+
+    .metric-card.delta-neg {
+      border-color: var(--danger-border);
+      background: var(--danger-bg);
+    }
+    .metric-card.delta-neg .value { color: var(--danger-text); }
+
+    .metric-card.efic-high {
+      border-color: var(--success-border);
+      background: var(--success-bg);
+    }
+    .metric-card.efic-high .value { color: var(--success-text); }
+
+    .metric-card.efic-mid {
+      border-color: var(--warning-border);
+      background: var(--warning-bg);
+    }
+    .metric-card.efic-mid .value { color: var(--warning-text); }
+
+    .metric-card.efic-low {
+      border-color: var(--danger-border);
+      background: var(--danger-bg);
+    }
+    .metric-card.efic-low .value { color: var(--danger-text); }
+
+    .summary-box {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      line-height: 2;
+      margin-bottom: 10px;
+    }
+
+    .summary-box .row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .summary-box .row span { color: var(--text-secondary); }
+    .summary-box .row strong { color: var(--text); font-weight: 600; }
+
+    .actions { display: flex; flex-direction: column; gap: 8px; }
+
+    .btn-copy {
+      padding: 10px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text-secondary);
+      font-size: 18px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.15s;
+    }
+    .btn-copy:hover { background: var(--surface-alt); }
+
+    .btn-reset {
+      padding: 9px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-reset:hover { background: var(--surface-alt); }
+
+    .status {
+      font-size: 12px;
+      color: var(--success-text);
+      text-align: center;
+      min-height: 18px;
+      margin-top: 6px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-weight: 500;
+
+      
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header" style="text-align: center;">
+     <h1 style="text-align: center; color: #ffffff; justify-content: center; font-size: 36px; font-family: 'Helvetica', sans-serif;">
+  FECHAMENTO DIÁRIO
+</h1>
+      <p style="color: #ffffff;">Configure sua meta e insira o realizado do dia.</p>
+    </div>
+
+    <div class="card">
+      <div class="config-row">
+        <span class="config-label" style="color: #ffffff;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" style="vertical-align:-2px; margin-right:5px;"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+        Meta impostada (fixa)
+        </span>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <input type="number" id="impostado" class="meta-input" value="8000" min="0" />
+          <span style="font-size:13px; color:var(--text-muted);">un.</span>
+        </div>
+      </div>
+      <div class="config-hint" style="color: #ffffff;">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" style="vertical-align:-1px; margin-right:4px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+  Altere a meta sempre que precisar
+</div>
+    </div>
+
+    <div class="card">
+      <label class="input-label" for="realizado" style="color: #ffffff;">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" style="vertical-align:-2px; margin-right:5px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+  Realizado do dia
+</label>
+      <div class="realizado-wrap">
+        <input type="number" id="realizado" class="realizado-input" placeholder="Ex: 8778" min="0" />
+        <button class="btn-calc" onclick="calcular()">Calcular →</button>
+      </div>
+    </div>
+
+    <div class="results" id="results">
+      <div class="cards-grid">
+        <div class="metric-card">
+          <div class="label" style="color: #ffffff;">Impostado</div>
+          <div class="value" id="r-impostado" style="color: #ffffff;">—</div>
+        </div>
+        <div class="metric-card" id="card-realizado">
+         <div class="label" style="color: #ffffff;">Realizado</div>
+          <div class="value" id="r-realizado" style="color: #ffffff;">—</div>
+        </div>
+        <div class="metric-card" id="card-delta">
+          <div class="label" style="color: #ffffff;">Delta</div>
+          <div class="value" id="r-delta" style="color: #ffffff;">—</div>
+        </div>
+        <div class="metric-card" id="card-efic">
+          <div class="label" style="color: #ffffff;">Aderência</div>
+          <div class="value" id="r-efic" style="color: #ffffff;">—</div>
+        </div>
+      </div>
+
+      <div class="summary-box">
+  <div class="row"><span style="color: #ffffff;">* IMPOSTADO:</span><strong id="s-imp" style="color: #ffffff;">—</strong></div>
+  <div class="row"><span style="color: #ffffff;">* REALIZADO:</span><strong id="s-real" style="color: #ffffff;">—</strong></div>
+  <div class="row"><span style="color: #ffffff;">* DELTA:</span><strong id="s-delta" style="color: #ffffff;">—</strong></div>
+  <div class="row"><span style="color: #ffffff;">* ADERÊNCIA:</span><strong id="s-efic" style="color: #ffffff;">—</strong></div>
+</div>
+      <div class="actions">
+        <button class="btn-copy" onclick="copiar()" style="color: #ffffff;">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+  Copiar resumo
+</button>
+        <button class="btn-reset" onclick="resetar()" style="color: #ffffff;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+          Novo fechamento
+        </button>
+      </div>
+      <div class="status" id="status"></div>
+    </div>
+  </div>
+
+  <script>
+    function fmt(n) {
+      return Number(n).toLocaleString('pt-BR');
+    }
+
+    function calcular() {
+      const imp = parseFloat(document.getElementById('impostado').value);
+      const real = parseFloat(document.getElementById('realizado').value);
+
+      if (isNaN(imp) || imp <= 0) {
+        alert('Defina a meta impostada antes de calcular.');
+        return;
+      }
+      if (isNaN(real) || real < 0) {
+        alert('Informe o valor realizado do dia.');
+        return;
+      }
+
+      const delta = real - imp;
+      const efic = (real / imp) * 100;
+
+      document.getElementById('r-impostado').textContent = fmt(imp);
+      document.getElementById('r-realizado').textContent = fmt(real);
+      document.getElementById('r-delta').textContent = (delta >= 0 ? '+' : '') + fmt(delta);
+      document.getElementById('r-efic').textContent = efic.toFixed(1) + '%';
+
+      document.getElementById('s-imp').textContent = fmt(imp);
+      document.getElementById('s-real').textContent = fmt(real);
+      document.getElementById('s-delta').textContent = (delta >= 0 ? '+' : '') + fmt(delta);
+      document.getElementById('s-efic').textContent = efic.toFixed(1) + '%';
+
+      const cardDelta = document.getElementById('card-delta');
+      cardDelta.className = 'metric-card ' + (delta >= 0 ? 'delta-pos' : 'delta-neg');
+
+      const cardEfic = document.getElementById('card-efic');
+      if (efic >= 100) {
+        cardEfic.className = 'metric-card efic-high';
+      } else if (efic >= 90) {
+        cardEfic.className = 'metric-card efic-mid';
+      } else {
+        cardEfic.className = 'metric-card efic-low';
+      }
+
+      document.getElementById('results').classList.add('show');
+      document.getElementById('status').textContent = '';
+    }
+
+    function copiar() {
+      const imp = document.getElementById('s-imp').textContent;
+      const real = document.getElementById('s-real').textContent;
+      const delta = document.getElementById('s-delta').textContent;
+      const efic = document.getElementById('s-efic').textContent;
+
+      const texto = `* IMPOSTADO: ${imp}\n* REALIZADO: ${real}\n* DELTA: ${delta}\n* ADERÊNCIA: ${efic}`;
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(texto).then(() => {
+          document.getElementById('status').textContent = '✓ Resumo copiado com sucesso!';
+          setTimeout(() => document.getElementById('status').textContent = '', 2500);
+        });
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = texto;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        document.getElementById('status').textContent = '✓ Resumo copiado com sucesso!';
+        setTimeout(() => document.getElementById('status').textContent = '', 2500);
+      }
+    }
+
+    function resetar() {
+      document.getElementById('realizado').value = '';
+      document.getElementById('results').classList.remove('show');
+      document.getElementById('realizado').focus();
+    }
+
+    document.getElementById('realizado').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') calcular();
+    });
+  </script>
+</body>
+</html>
