@@ -51,6 +51,8 @@
         --danger-text: #f7c1c1;
       }
     }
+
+    
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Outfit', Roboto, sans-serif;
  background: url('images.jpg') no-repeat center center fixed;
@@ -198,7 +200,7 @@ body {
 
     .metric-card {
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border);  
       border-radius: 12px;
       padding: 1rem 1.25rem;
     }
@@ -221,9 +223,12 @@ body {
     .metric-card.delta-pos {
       border-color: var(--success-border);
       background: var(--success-bg);
-    }
-    .metric-card.delta-pos .value { color: var(--success-text); }
-
+    }  
+    
+    .metric-card.delta-pos .value { 
+  color: #7CFF7A !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+}
     .metric-card.delta-neg {
       border-color: var(--danger-border);
       background: var(--danger-bg);
@@ -234,7 +239,11 @@ body {
       border-color: var(--success-border);
       background: var(--success-bg);
     }
-    .metric-card.efic-high .value { color: var(--success-text); }
+    
+    .metric-card.efic-high .value { 
+  color: #7CFF7A !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+}
 
     .metric-card.efic-mid {
       border-color: var(--warning-border);
@@ -335,15 +344,14 @@ body {
       max-width: 100%;
       font-size: 16px; /* evita zoom automático em alguns celulares */
     }
-
-    .card,
-    .metric-card,
-    .summary-box {
-      background: rgba(0, 0, 0, 0.42);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border-color: rgba(255, 255, 255, 0.22);
-    }
+ .card,
+.metric-card,
+.summary-box {
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-color: rgba(255, 255, 255, 0.28);
+}
 
     .meta-input,
     .realizado-input {
