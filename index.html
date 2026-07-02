@@ -601,8 +601,9 @@ body {
 
   <script>
     function fmt(n) {
-      return Number(n).toLocaleString('pt-BR');
-    }
+  const numero = Number(n);
+  return Number.isFinite(numero) ? String(Math.round(numero)) : '';
+}
 
     function calcular() {
       const imp = parseFloat(document.getElementById('impostado').value);
